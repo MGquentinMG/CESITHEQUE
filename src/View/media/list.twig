@@ -1,0 +1,49 @@
+{% extends 'base.twig' %}
+
+{% block title %}Liste des Médias{% endblock %}
+
+{% block content %}
+    <h1>Liste des Médias</h1>
+
+    <a href="/media/add" class="btn-orange">Ajouter un média</a> |
+    <a href="/emprunts" class="btn-orange">Voir les emprunts</a>
+
+    <div class="table-wrapper">
+        <table>
+            <thead>
+            <tr>
+                <th>Titre</th>
+                <th>Type</th>
+                <th>Description</th>
+                <th>Photo</th>
+                <th>Date d'ajout</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for media in medias %}
+                <tr>
+                    <td>{{ media.title }}</td>
+                    <td>{{ media.type }}</td>
+                    <td>{{ media.description|default('Aucune description') }}</td>
+                    <td>
+                        {% if media.photo %}
+                            <img src="{{ media.photo }}" alt="Photo de {{ media.title }}" class="media-photo">
+                        {% else %}
+                            Aucune photo
+                        {% endif %}
+                    </td>
+                    <td>{{ media.created_at|date("d/m/Y H:i") }}</td>
+                    <td>
+                        <a href="/media/edit/{{ media.id }}" class="btn-orange">Modifier</a> |
+                        <a href="/media/delete/{{ media.id }}" onclick="return confirm('Confirmer la suppression ?')" class="btn-orange">Supprimer</a> |
+                        <a href="/emprunts/borrow/{{ media.id }}" class="btn-orange">Emprunter</a>
+                    </td>
+                </tr>
+            {% else %}
+                <tr><td colspan="6">Aucun média trouvé.</td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

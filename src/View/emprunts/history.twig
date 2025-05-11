@@ -1,0 +1,35 @@
+{% extends 'base.twig' %}
+
+{% block title %}Historique des emprunts{% endblock %}
+
+{% block content %}
+    <h1>Historique des emprunts</h1>
+    <table>
+        <thead>
+        <tr>
+            <th>Média</th>
+            <th>Emprunté le</th>
+            <th>Retourné le</th>
+            <th>Emprunté par</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for h in history %}  <!-- Modifié de Allhistory à history -->
+            <tr>
+                <td>{{ h.media }}</td>
+                <td>{{ h.date_emprunt|date('d/m/Y') }}</td>
+                <td>
+                    {% if h.date_retour %}
+                        {{ h.date_retour|date('d/m/Y') }}
+                    {% else %}
+                        <em>En cours</em>
+                    {% endif %}
+                </td>
+                <td>{{ h.user_name }}</td>
+            </tr>
+        {% else %}
+            <tr><td colspan="4">Aucun emprunt dans votre historique</td></tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

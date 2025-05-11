@@ -1,0 +1,86 @@
+{% extends 'base.twig' %}
+
+{% block title %}Catalogue Visuel{% endblock %}
+
+{% block content %}
+    <h1>Catalogue des Médias</h1>
+
+    <!-- Barre de recherche et filtre par type -->
+    <div class="search-container">
+        <input type="text" id="searchInput-list_user" placeholder="Rechercher un média..." onkeyup="searchMedia()">
+    </div>
+
+    <div class="form-group">
+
+        <select id="type" name="type" onchange="filterMedia()">
+            <option value="">Tous</option>
+            <option value="livre">Livre</option>
+            <option value="dvd">DVD</option>
+            <option value="jeu">Jeu Vidéo</option>
+        </select>
+    </div>
+
+    <div class="media-gallery list_user" id="mediaGallery">
+        {% for media in medias %}
+            <div class="media-card list_user" onclick="openModal({{ media.id }})" data-title="{{ media.title }}" data-type="{{ media.type }}">
+                {% if media.photo %}
+                    <img src="{{ media.photo }}" alt="{{ media.title }}">
+                {% else %}
+                    <div>Pas de photo</div>
+                {% endif %}
+                <h2 class="media-card-title list_user">{{ media.title }}</h2>
+            </div>
+
+            <!-- Modal caché -->
+            <div id="modal-{{ media.id }}-list_user" class="media-modal list_user">
+                <div class="modal-content list_user">
+                    <span class="modal-close list_user" onclick="closeModal({{ media.id }})">&times;</span>
+                    <h2 class="modal-title list_user">{{ media.title }}</h2>
+                    <p><strong>Type :</strong> {{ media.type }}</p>
+                    <p><strong>Description :</strong> {{ media.description|default('Aucune description') }}</p>
+                    <p><strong>Ajouté le :</strong> {{ media.created_at|date("d/m/Y H:i") }}</p>
+                    {% if media.photo %}
+                        <img src="{{ media.photo }}" alt="{{ media.title }}" class="modal-image list_user">
+                    {% endif %}
+                    <a href="/emprunts/borrow/{{ media.id }}" class="btn-orange">Emprunter</a>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script src="/js/popup_list_user.js"></script>
+    <script src="/js/search_media.js"></script> <!-- Ajout du script de recherche -->
+    <script>
+        // Fonction de filtrage par type
+        function filterMedia() {
+            var searchInput = document.getElementById('searchInput-list_user').value.toLowerCase();
+            var typeFilter = document.getElementById('type').value;
+            var mediaCards = document.querySelectorAll('.media-card');
+
+            mediaCards.forEach(function(card) {
+                var title = card.getAttribute('data-title').toLowerCase();
+                var type = card.getAttribute('data-type');
+
+                // Applique le filtrage par type et par recherche
+                if (
+                    (typeFilter === '' || type === typeFilter) && // Vérifie le type
+                    (title.includes(searchInput)) // Vérifie la recherche
+                ) {
+                    card.style.display = '';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        // Appel de la fonction pour initialiser le filtrage
+        document.getElementById('searchInput-list_user').addEventListener('keyup', filterMedia);
+        document.getElementById('type').addEventListener('change', filterMedia);
+    </script>
+{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="/assets/css/style.css">
+{% endblock %}

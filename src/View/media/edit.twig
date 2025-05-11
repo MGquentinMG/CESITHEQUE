@@ -1,0 +1,79 @@
+{% extends 'base.twig' %}
+
+{% block title %}Modifier un Média{% endblock %}
+
+{% block content %}
+    <main>
+        <section class="login-container">
+            <h2>Modifier un Média</h2>
+            <form id="editMediaForm" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="title">Titre :</label>
+                    <input type="text" id="title" name="title" value="{{ media.title }}" required>
+                </div>
+                <div class="form-group">
+                    <label for="type">Type :</label>
+                    <select id="type" name="type" required>
+                        <option value="livre" {{ media.type == 'livre' ? 'selected' : '' }}>Livre</option>
+                        <option value="dvd" {{ media.type == 'dvd' ? 'selected' : '' }}>DVD</option>
+                        <option value="jeu" {{ media.type == 'jeu' ? 'selected' : '' }}>Jeu Vidéo</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="description">Description :</label>
+                    <textarea id="description" name="description" rows="4" placeholder="Décris le média...">{{ media.description }}</textarea>
+                </div>
+                <div class="form-group">
+                    <label>Photo actuelle :</label>
+                    {% if media.photo %}
+                        <br><img src="{{ media.photo }}" alt="Photo actuelle" class="media-photo" style="max-width: 100px;">
+                    {% else %}
+                        Aucune photo
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    <label for="photo">Nouvelle photo (facultatif) :</label>
+                    <input type="file" id="photo" name="photo" accept="image/*" class="file-input">
+                </div>
+                <button type="submit" class="btn-orange">Mettre à jour</button>
+            </form>
+            <a href="/media" class="btn-cancel">Annuler</a>
+        </section>
+    </main>
+{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="/assets/css/style.css">
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        document.getElementById('editMediaForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const form = e.target;
+            const id = {{ media.id }};
+            // On simule PUT via query string
+            const url = '/api/media/' + id + '?_method=PUT';
+            const formData = new FormData(form);
+
+            fetch(url, {
+                method: 'POST',      // POST + _method=PUT
+                body: formData       // multipart/form-data
+            })
+                .then(resp => resp.json())
+                .then(data => {
+                    if (data.message) {
+                        alert(data.message);
+                        window.location.href = '/media';
+                    } else {
+                        alert('Erreur : ' + (data.error || 'inconnue'));
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    alert('Erreur réseau');
+                });
+        });
+    </script>
+{% endblock %}

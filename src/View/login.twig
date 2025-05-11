@@ -1,0 +1,34 @@
+{% extends 'base.twig' %}
+
+{% block title %}Connexion{% endblock %}
+
+{% block content %}
+
+
+    <main>
+        <section class="login-container">
+            <h2>Connexion</h2>
+            {% if error %}
+                <p style="color: red;">{{ error }}</p>
+            {% endif %}
+            <form method="POST" action="/login">
+                <div class="form-group">
+                    <label for="username">Nom d'utilisateur</label>
+                    <input type="text" id="username" name="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Mot de passe</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <button type="submit" class="btn-orange">Se connecter</button>
+            </form>
+        </section>
+    </main>
+
+{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="/assets/css/style.css">
+{% endblock %}
+
+

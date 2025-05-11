@@ -1,0 +1,33 @@
+{% extends 'base.twig' %}
+
+{% block title %}Emprunts en cours{% endblock %}
+
+{% block content %}
+    <h1>Emprunts en cours</h1>
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Utilisateur</th>
+            <th>Média</th>
+            <th>Date emprunt</th>
+            <th>Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for e in emprunts %}
+            <tr>
+                <td>{{ e.id }}</td>
+                <td>{{ e.user }}</td>
+                <td>{{ e.media }}</td>
+                <td>{{ e.date_emprunt|date('d/m/Y H:i') }}</td>
+                <td>
+                    <a href="/emprunts/return/{{ e.id }}" onclick="return confirm('Voulez-vous vraiment retourner cet emprunt ?')" class="btn-orange">Retourner</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr><td colspan="5">Aucun emprunt en cours</td></tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

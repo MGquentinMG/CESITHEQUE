@@ -1,0 +1,67 @@
+{% extends 'base.twig' %}
+
+{% block title %}Ajouter un Média{% endblock %}
+
+{% block content %}
+    <main>
+        <section class="login-container">
+            <h2>Ajouter un Média</h2>
+            <form id="addMediaForm" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="title">Titre :</label>
+                    <input type="text" id="title" name="title" required>
+                </div>
+                <div class="form-group">
+                    <label for="type">Type :</label>
+                    <select id="type" name="type" required>
+                        <option value="livre">Livre</option>
+                        <option value="dvd">DVD</option>
+                        <option value="jeu">Jeu Vidéo</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="description">Description :</label>
+                    <textarea id="description" name="description" rows="4" placeholder="Décris le média..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="photo">Photo :</label>
+                    <input type="file" id="photo" name="photo" accept="image/*" class="file-input">
+                </div>
+                <button type="submit" class="btn-orange">Ajouter</button>
+            </form>
+        </section>
+    </main>
+{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="/assets/css/style.css">
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        document.getElementById('addMediaForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const form = e.target;
+            const formData = new FormData(form);
+
+            fetch('/api/media', {
+                method: 'POST',
+                body: formData     // envoi en multipart/form-data
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.message) {
+                        alert(data.message);
+                        window.location.href = '/media';
+                    } else {
+                        alert('Erreur : ' + (data.error || 'inconnue'));
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    alert('Erreur réseau');
+                });
+        });
+    </script>
+{% endblock %}

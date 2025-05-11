@@ -1,0 +1,165 @@
+    <!DOCTYPE html>
+    <html lang="fr">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>{% block title %}Mon Application{% endblock %}</title>
+        <link rel="stylesheet" href="/assets/css/style.css">
+
+        <style>
+            /* Navigation principale */
+            nav ul {
+                list-style: none;
+                padding: 0;
+                display: flex;
+                gap: 15px;
+            }
+
+            nav li, nav form {
+                display: inline;
+            }
+
+            nav a, nav button {
+                text-decoration: none;
+                color: #333;
+                font-weight: bold;
+                background: none;
+                border: none;
+                cursor: pointer;
+                font-size: 1em;
+            }
+
+            /* Menu burger */
+            .burger-container {
+                position: absolute;
+                top: 10px;
+                left: 10px;
+                z-index: 1000;
+            }
+
+            .burger-menu {
+                width: 30px;
+                height: 25px;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                cursor: pointer;
+            }
+
+            .burger-menu div {
+                height: 4px;
+                background-color: #333;
+                border-radius: 2px;
+            }
+
+            .burger-dropdown {
+                display: none;
+                position: absolute;
+                top: 40px;
+                left: 10px;
+                background-color: white;
+                box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+                padding: 10px;
+                border-radius: 5px;
+            }
+
+            .burger-dropdown a {
+                display: block;
+                text-decoration: none;
+                color: white; /* <-- change cette ligne */
+                padding: 5px 10px;
+            }
+
+
+            .burger-dropdown a:hover {
+                background-color: #f0f0f0;
+            }
+
+            @media (max-width: 768px) {
+                nav ul {
+                    flex-direction: column;
+                    gap: 10px;
+                }
+            }
+        </style>
+
+        {% block stylesheets %}{% endblock %}
+    </head>
+    <body>
+    <header>
+        <!-- Menu Burger -->
+        <div class="burger-container">
+            <div class="burger-menu" onclick="toggleBurgerMenu()">
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+
+            <div id="burger-dropdown" class="burger-dropdown">
+                <li><a href="/home" class="btn-orange">Accueil</a></li>
+                <li>
+                    <form method="post" action="/logout">
+                        <button type="submit" class="btn-orange">Déconnexion</button>
+                    </form>
+                </li>
+            </div>
+
+        </div>
+
+        <h1>CESITHEQUE</h1>
+
+        <!-- Navigation principale -->
+        <nav>
+            <ul>
+                {% if session.user_id is defined %}
+                    {% if session.role == 'Admin' %}
+                        <li><a href="/media" class="btn-orange">Médias</a></li>
+                        <li><a href="/emprunts" class="btn-orange">Emprunts</a></li>
+                        <li><a href="/emprunts/history" class="btn-orange">Historique</a></li>
+                    {% endif %}
+                    {% if session.role == 'user' %}
+                        <a href="/media/list_user" class="btn-orange">Explorer les médias</a>
+                        <li><a href="/emprunts/historyPersonnal" class="btn-orange">Mes emprunts</a></li>
+                    {% endif %}
+
+
+
+                {% else %}
+                    <li><a href="/login" class="btn-orange">Se connecter</a></li>
+                    <li><a href="/register" class="btn-orange">S'inscrire</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Mon Application</p>
+        <ul class="footer-links">
+            <li><a href="/Propos" class="btn-orange">À propos</a></li>
+            <li><a href="/Contact" class="btn-orange">Contact</a></li>
+        </ul>
+    </footer>
+
+    <!-- Menu burger JS -->
+    <script>
+        function toggleBurgerMenu() {
+            const menu = document.getElementById('burger-dropdown');
+            menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+        }
+
+        document.addEventListener('click', function(e) {
+            const burger = document.querySelector('.burger-menu');
+            const dropdown = document.getElementById('burger-dropdown');
+            if (!burger.contains(e.target) && !dropdown.contains(e.target)) {
+                dropdown.style.display = 'none';
+            }
+        });
+    </script>
+
+    {% block javascripts %}{% endblock %}
+    </body>
+    </html>
